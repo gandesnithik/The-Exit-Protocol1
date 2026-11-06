@@ -68,6 +68,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .cam{background:linear-gradient(135deg,#0d2018,#06100b);border:.5cqw solid #12171c;box-shadow:0 0 2.5cqw rgba(120,230,170,.2);animation:fl 5s infinite}
 .cam svg{position:absolute;inset:0;opacity:.85}
 .cam span{inset:auto auto 3% 5%;position:absolute;font-size:.9cqw;color:#7fe8b0;z-index:3}
+.cam b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:4cqw;color:#7fe8b0;opacity:.35;z-index:1}.cam.ok{border-color:#2c8a55;box-shadow:0 0 2.5cqw rgba(75,227,138,.5)}
 .board{background:#241f1a;border:.5cqw solid #3a3128}
 .board i{position:absolute;width:26%;height:26%;background:linear-gradient(#9aa4ae,#5d6670);border:.3cqw solid #d9d9d2}
 .board i.r{box-shadow:0 0 0 .4cqw var(--red)}
@@ -121,12 +122,12 @@ button.sl:hover{border-color:var(--cold)}
 <div id="tt" class="tt"></div><div id="fade"></div>
 <script>
 "use strict";
-const $=s=>document.querySelector(s),KEY="tep_save_v1",BUILT=2;
+const $=s=>document.querySelector(s),KEY="tep_save_v1",BUILT=15;
 const DEF=()=>({room:1,max:1,inv:[],j:[],f:{},hl:{},rh:{},t:0,ach:[],done:[],set:{vol:.6,snd:1}});
 let S=DEF(),K="",Q=[];
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s)S=Object.assign(DEF(),s)}catch(e){}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}},F=()=>S.f[S.room]||(S.f[S.room]={}),has=i=>S.inv.includes(i);
-const CH=["The Awakening","The Observation Room","The Archive","The Signal Room","The Laboratory","The Reactor","The Control Room","The Exit"];
+const ld=()=>{try{return localStorage.getItem(KEY)}catch(e){return null}},save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}},F=()=>S.f[S.room]||(S.f[S.room]={}),has=i=>S.inv.includes(i);
+const CH=["The Awakening","The Observation Room","The Archive","The Signal Room","The Laboratory","The Cold Storage","The Reactor","The Server Hall","The Mirror Ward","The Control Room","The Flooded Level","The Clockwork Vault","The Council Chamber","The Last Corridor","The Exit"];
 const ACH={first:["First Discovery","Complete the first room."],obs:["Observer","Find every hidden clue in a room."],nohelp:["No Help Needed","Complete a room without hints."],arch:["Archivist","Collect all documents."],truth:["The Truth Seeker","Discover all major story revelations."],esc:["Escaped","Complete the game."]};
 const IC={doc:"<path d='M6 3h9l4 4v14H6zM9 12h7M9 16h7'/>",tool:"<path d='M4 20l9-9M13 11l-2-4 3-3 4 2-1 4z'/>",card:"<rect x='3' y='6' width='18' height='12' rx='1.5'/><path d='M3 10h18'/>",tape:"<rect x='3' y='6' width='18' height='12' rx='1.5'/><circle cx='9' cy='12' r='2'/><circle cx='15' cy='12' r='2'/>"};
 const IT={
@@ -192,34 +193,84 @@ door(f){if(f.open)fin();else M("Door","<p>Sealed. A dark panel beside it answers
 cab(f){if(f.cab){M("Security cabinet","<p>The cabinet is empty. Its lamps are green.</p>");return}Q=[];M("Security cabinet",`<p>A sealed cabinet with four buttons, one per camera. Every press is logged.</p><div class="kd" id="qd">_ _ _ _</div><div class="kg" style="grid-template-columns:repeat(4,1fr)">${"ABCD".split("").map(c=>`<button data-a="q" data-v="${c}">CAM ${c}</button>`).join("")}</div><p class="msg" id="km"></p>`)},
 door(f){if(f.open)fin();else M("Door","<p>A card reader glows red beside the door.</p>"+(has("card")?B("uc","Use keycard"):""))}}};
 ["A","B","C","D"].forEach(c=>OB[2]["c"+c]=()=>{const f=F();f.v=f.v||{};f.v[c]=1;jr("cam"+c,"Camera "+c,"Timestamp: "+CAMS[c]+". "+CD[c]);M("Camera "+c,`<div class="feed">${fsvg(c)}<span>CAM ${c} &nbsp; ${CAMS[c]}</span></div><p>${CD[c]}</p>`);if(Object.keys(f.v).length==4&&!f.all){f.all=1;toast("You have reviewed every feed.")}save()});
+/* ---------- chambers 03-15: generated puzzles, harder every level ---------- */
+const LT={3:"com",4:"poc",5:"rbm",6:"lpc",7:"ybom",8:"clpr",9:"bymo",10:"lcpb",11:"ylmr",12:"cpboy",13:"lmrcy",14:"plboy",15:"clymp"};
+const TN={c:"Cipher",m:"Arithmetic",o:"Sorting",l:"Power grid",y:"Memory",r:"Riddle",b:"Binary",p:"Sequence"};
+const WD={3:"ledger",4:"static",5:"isotope",6:"frozen",7:"coolant",8:"firewall",9:"reflection",10:"override",11:"pressure",12:"pendulum",13:"tribunal",14:"corridor",15:"liberation"};
+const RQ=[["I speak without a mouth and hear without ears. I answer only when you call.","echo"],["The more of me you take, the more you leave behind.","footsteps","footstep","steps"],["I have cities but no houses, mountains but no trees, and water but no fish.","map","amap"],["What gets wetter the more it dries?","towel","atowel"]];
+const YN=["red","blue","green","amber"],YC=["#d6453d","#4a8fe8","#4be38a","#e8b84a"];
+const ST={3:"Rows of steel shelves. Every folder is stamped with your handwriting. Someone built this place around you.",4:"A dead radio room. Faint speech loops from the speakers: \"Do not trust the voice.\" You recognise it. It is your own.",5:"Empty glass cages. Notes describe a volunteer who asked to forget everything. They are signed S.",6:"Frost on every wall. Sealed lockers, each labelled SUBJECT. Yours is the only one still empty.",7:"A low hum shakes the floor. The reactor powers every door, and every door was built to keep you in.",8:"Servers log your every move. A counter on the wall reads: ATTEMPT 214.",9:"Mirrors on every wall. Your reflection hesitates half a second before you move.",10:"Screens replay every room you have escaped. Someone has watched all of it, and is proud.",11:"Cold water at your ankles, still rising. The exit lights flicker on the far wall.",12:"Gears fill the walls. Nothing here moves unless it is done in the right order.",13:"Twelve empty chairs. A recording plays: \"Subject 001 volunteered for attempt 214. It will not remember. It never does.\"",14:"A long hall of doors numbered 1 to 213, all open and empty. Only the last is shut.",15:"Daylight shows under the final door. S is waiting on the other side. The last test is leaving, knowing everything."};
+const rng=s=>()=>{s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296},norm=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,"");
+function tgl(g,z,c){const x=c%z,y=Math.floor(c/z);[[0,0],[1,0],[-1,0],[0,1],[0,-1]].forEach(([a,b])=>{const X=x+a,Y=y+b;if(X>=0&&X<z&&Y>=0&&Y<z)g[Y*z+X]^=1})}
+function LV(n){const t=LT[n],r=rng(n*997),D=[...t].map(()=>1+Math.floor(r()*9)),m=n<7?0:n<10?1:n<13?2:3;
+const code=m==0?D.join(""):m==1?D.slice().reverse().join(""):D.slice().sort((a,b)=>m==2?a-b:b-a).join("");
+return{ns:t.length,D,code,rt:["Enter the fragments in terminal order.","Enter the fragments in reverse order, last terminal first.","Enter the fragments sorted from smallest to largest.","Enter the fragments sorted from largest to smallest."][m]}}
+function PZ(n,i){const ty=LT[n][i],r=rng(n*131+i*17+7),ri=(a,b)=>a+Math.floor(r()*(b-a+1)),p={ty};
+if(ty=="c"){const w=WD[n],s=n<7?ri(1,3):ri(4,12),rv=n>=10;let e=[...w].map(c=>String.fromCharCode((c.charCodeAt(0)-97+s)%26+97)).join("");if(rv)e=[...e].reverse().join("");
+p.q=`The lock label is scrambled: <b class="mono">${e.toUpperCase()}</b>\nEvery letter was moved ${s} place${s>1?"s":""} forward in the alphabet${rv?", then the whole word was written backwards":""}. Type the real word.`;p.a=[w];p.s=w;p.h="Undo the steps in the opposite order. Z wraps around to A."}
+else if(ty=="m"){let v=ri(3,9),e=""+v;const k=1+(n>5)+(n>9)+(n>12);for(let j=0;j<k;j++){let o=["+","−","×"][ri(0,2)];const b=o=="×"?ri(2,4):ri(2,9+n);if(o=="−"&&b>v)o="+";v=o=="+"?v+b:o=="−"?v-b:v*b;e=`(${e} ${o} ${b})`}
+p.q=`Solve the panel:\n<b class="mono">${e.slice(1,-1)} = ?</b>`;p.a=[""+v];p.h="Work from the innermost brackets outward."}
+else if(ty=="o"){const N=Math.min(3+Math.floor(n/3),8),md=n<7?0:n<11?1:2,ds=x=>(""+x).split("").reduce((a,b)=>a+ +b,0);let L;
+do{L=[];while(L.length<N){const x=ri(10,99);if(!L.includes(x))L.push(x)}}while(md==2&&new Set(L.map(ds)).size<N);
+const key=x=>md==2?ds(x):x,srt=L.slice().sort((a,b)=>md==1?key(b)-key(a):key(a)-key(b));
+p.L=L;p.N=N;p.ans=srt;p.q=["Press the numbers from smallest to largest.","Press the numbers from largest to smallest.","Press the numbers by digit sum, smallest sum first (29 has a sum of 11)."][md];p.s=srt.join(", ");p.h="Read the instruction twice. It changes from room to room."}
+else if(ty=="l"){const z=n<8?3:n<13?4:5,k=n<8?ri(3,5):ri(5,8),g=Array(z*z).fill(0),pr=[];for(let j=0;j<k;j++)pr.push(ri(0,z*z-1));pr.forEach(c=>tgl(g,z,c));if(!g.some(x=>x)){pr.push(0);tgl(g,z,0)}
+p.z=z;p.g=g;p.q="The grid is overloaded. Pressing a cell flips it and its four neighbours. Switch every light off.";p.s="press (row, column): "+[...new Set(pr.filter(c=>pr.filter(d=>d==c).length%2))].map(c=>`(${Math.floor(c/z)+1},${c%z+1})`).join(" ");p.h="Fix the top row first using the row beneath it, then solve what is left."}
+else if(ty=="y"){const L=3+Math.floor(n/3);p.seq=Array.from({length:L},()=>ri(0,3));p.q=`Watch the pads, then repeat the sequence of ${L} flashes. You can replay it as often as you need.`;p.s=p.seq.map(x=>YN[x]).join(", ");p.h="Say the colours aloud as they flash. Replaying is free."}
+else if(ty=="r"){const q=RQ[[5,8,11,13].indexOf(n)];p.q=q[0]+"\nOne word.";p.a=q.slice(1);p.s=q[1];p.h="Think about what the words describe, not what they say."}
+else if(ty=="b"){const bt=Math.min(4+Math.floor(n/3),8),v=ri(1<<(bt-1),(1<<bt)-1);p.q=`The panel shows bits, most significant first:\n<b class="mono">${v.toString(2).padStart(bt,"0")}</b>\nEnter the decimal value.`;p.a=[""+v];p.h="The right-most bit is 1, then 2, 4, 8, 16... Add the places showing 1."}
+else{const t=n<5?0:n<9?1:n<12?2:n<14?3:4,L=[ri(1,5)],d=ri(2,6),m=ri(2,3),c=ri(1,3),b=ri(2,6);for(let j=0;j<6;j++){const x=L[j];L.push(t==0?x+d:t==1?x*m:t==2?(j?x+L[j-1]:b):t==3?x+d+j*c:x*2+c)}
+p.q=`What comes next?\n<b class="mono">${L.slice(0,6).join(",  ")},  ?</b>`;p.a=[""+L[6]];p.h="Look at the gaps between neighbouring terms, then at how the gaps change."}
+return p}
+function genHN(n){const t=LT[n],P=LV(n);return[...[...t].map((_,i)=>{const p=PZ(n,i);return[f=>!(f.s&&f.s[i]),["Terminal "+(i+1)+" is still dark. Open it and read what it asks.",p.h,"Answer: "+(p.s||p.a[0])]]}),[()=>1,["Every terminal gives you a fragment.","The door states the order. "+P.rt,"The code is "+P.code+"."]]]}
+let cp=null,PS=[],PL=[],MT=0;
+const lgh=()=>PL.map((v,c)=>`<button data-a="pl" data-v="${c}" style="aspect-ratio:1;padding:0;background:${v?"#e8d27a":"#12171d"};box-shadow:${v?"0 0 12px #e8d27a":"none"}"></button>`).join("");
+function doorUI(){const n=S.room,f=F(),P=LV(n),got=P.D.map((d,i)=>f.s&&f.s[i]?d:"?").join("  ");K="";
+M("Door",`<p class="mono">FRAGMENTS (terminals 1 to ${P.ns}): ${got}</p><p>${P.rt}</p><div class="kd" id="kd">${Array(P.ns).fill("_").join(" ")}</div><div class="kg">${[1,2,3,4,5,6,7,8,9,"C",0,"OK"].map(v=>`<button data-a="kk" data-v="${v}">${v}</button>`).join("")}</div><p class="msg" id="km"></p>`)}
+function openPZ(i){const n=S.room,f=F(),p=PZ(n,i),ty=p.ty,T=TN[ty]+" — terminal "+(i+1);cp={i,p};PS=[];
+if(f.s&&f.s[i]){M(T,`<p class="mono">MODULE SOLVED.\nFRAGMENT: ${LV(n).D[i]}</p>`);return}
+let w;
+if("cmrbp".includes(ty))w=`<input id="pi" autocomplete="off" style="width:100%;padding:11px;background:#04100a;color:#7fe8b0;border:1px solid #17352a;font:18px Consolas,monospace;margin-bottom:8px">`+B("pa","Submit");
+else if(ty=="o")w=`<div class="kd" id="od">&nbsp;</div><div class="kg" style="grid-template-columns:repeat(4,1fr)">${p.L.map(x=>`<button data-a="po" data-v="${x}">${x}</button>`).join("")}</div>`+B("pc","Clear");
+else if(ty=="l"){PL=p.g.slice();w=`<div class="kg" id="lg" style="grid-template-columns:repeat(${p.z},1fr);max-width:${p.z*64}px;margin:0 auto 8px">${lgh()}</div>`}
+else w=`<div class="kg" id="yp" style="grid-template-columns:repeat(2,1fr)">${YC.map((c,k)=>`<button data-a="py" data-v="${k}" style="background:${c};opacity:.45;padding:26px"></button>`).join("")}</div>`+B("yplay","Play sequence");
+M(T,`<p>${p.q}</p>`+w+'<p class="msg" id="pm"></p>')}
+function psolve(){const n=S.room,f=F(),i=cp.i,P=LV(n),d=P.D[i];f.s=f.s||{};f.s[i]=1;sfx("ok");jr(n+"s"+i,"Terminal "+(i+1)+" fragment","Chamber "+n+", terminal "+(i+1)+": fragment "+d+".");save();renderAll();
+M(TN[cp.p.ty]+" — solved",`<p class="mono">MODULE SOLVED.\nFRAGMENT FROM TERMINAL ${i+1}: ${d}</p>`+(Object.keys(f.s).length==P.ns?"<p>Every terminal is lit. The door is waiting for a code.</p>":"")+B("close","Continue"))}
+function pbad(m){sfx("bad");const e=$("#pm");if(e)e.textContent=m}
+for(let n=3;n<=15;n++){const t=LT[n],ns=t.length,h=(n*47)%360;
+R.push({n:CH[n-1],art:()=>base.replace(/class="(wall|floor)"/g,`class="$1" style="filter:hue-rotate(${h}deg)"`)+(n%2?'<i class="pipe" style="left:0;top:9%;width:30%"></i>':'<i class="pipe" style="left:60%;top:9%;width:40%"></i>'),
+obj:[...[...t].map((c,i)=>({i:"t"+i,l:"Terminal "+(i+1),x:3+i*(94/ns),y:8,w:ns>4?16:19,h:26,a:f=>`<div class="cam ${f.s&&f.s[i]?"ok":""}"><b>${i+1}</b><span>${f.s&&f.s[i]?"SOLVED":TN[c].toUpperCase()}</span></div>`})),
+{i:"door",l:"Door",x:43,y:42,w:14,h:46,a:f=>`<div class="dbox"><div class="door ${f.open?"open":""}"></div></div><i class="led ${f.open?"g":""}"></i>`}]});
+OB[n]={door(f){f.open?fin():doorUI()}};[...t].forEach((c,i)=>OB[n]["t"+i]=()=>openPZ(i))}
 /* ---------- rendering ---------- */
 function renderInv(){$("#inv").innerHTML=S.inv.map(i=>`<button class="sl" data-a="item" data-i="${i}" title="${IT[i].n}" aria-label="${IT[i].n}"><svg viewBox="0 0 24 24">${IC[IT[i].t]}</svg></button>`).join("")||'<span style="color:var(--dim);font-size:12px;letter-spacing:.15em">INVENTORY EMPTY</span>'}
-function renderAll(){const r=R[S.room-1],f=F();$("#ch").textContent="Chapter 0"+S.room+" / 08";$("#rn").textContent=r.n;$("#pg").style.width=S.done.length/8*100+"%";
+function renderAll(){const r=R[S.room-1],f=F();$("#ch").textContent="Chapter "+String(S.room).padStart(2,"0")+" / 15";$("#rn").textContent=r.n;$("#pg").style.width=S.done.length/15*100+"%";
 let d="";for(let i=0;i<14;i++)d+=`<i class="dp" style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:-${Math.random()*12}s"></i>`;
 $("#scene").innerHTML=r.art(f)+r.obj.map(o=>`<button class="hs" data-a="obj" data-o="${o.i}" data-l="${o.l}" aria-label="${o.l}" style="left:${o.x}%;top:${o.y}%;width:${o.w}%;${o.ar?"aspect-ratio:1":"height:"+o.h+"%"}">${o.a(f)}</button>`).join("")+'<div class="cone"></div>'+d+'<div class="vg"></div><div class="nz"></div>';renderInv()}
 function start(n){S.room=n;if(n>S.max)S.max=n;$("#menu").classList.remove("on");$("#game").classList.add("on");X();renderAll();save();if(!F().seen){F().seen=1;save();intro(n)}}
 function intro(n){if(n==1){const L=["CONTAINMENT PROTOCOL ACTIVE.","IDENTITY UNKNOWN.","EXIT ACCESS DENIED.","YOUR TEST BEGINS NOW."];sfx("pc");M("Terminal",`<p>You wake on cold concrete. A screen flickers on across the room.</p><div class="kd" style="text-align:left;font-size:14px;letter-spacing:.1em">${L.map((l,i)=>`<div class="ln" style="animation-delay:${i*1.1+.6}s">${l}</div>`).join("")}</div>`+B("close","Begin",'style="animation:in 1s 5s both"'))}
-else M("Observation Room","<p class='mono'>SUBJECT 001: ACCEPTED.\nPROCEEDING TO OBSERVATION.</p><p>Four screens. A wall of photographs. A sealed cabinet. Someone has been watching this place for a very long time.</p>"+B("close","Look around"))}
+else if(n>2)M(CH[n-1],"<p>"+ST[n]+"</p>"+B("close","Begin"));else M("Observation Room","<p class='mono'>SUBJECT 001: ACCEPTED.\nPROCEEDING TO OBSERVATION.</p><p>Four screens. A wall of photographs. A sealed cabinet. Someone has been watching this place for a very long time.</p>"+B("close","Look around"))}
 function fin(){const n=S.room;if(!S.done.includes(n))S.done.push(n);ach("first",n==1);if(!S.rh[n])ach("nohelp",1);save();
 if(n<BUILT)trans(()=>start(n+1));else end()}
-function end(){M("To be continued",`<p>You step through the door. The next chamber is dark, and something inside it is already humming.</p><p><b>Chapters sealed: ${S.done.length} / 8 &nbsp;·&nbsp; Playtime: ${fmtT(S.t)}</b></p><p>Chapter 03 — The Archive — is still being built.</p>`+B("menu","Main menu"))}
-function stepH(){const L=HN[S.room],f=F();for(let i=0;i<L.length;i++)if(L[i][0](f))return[i,L[i][1]];return[0,L[0][1]]}
+function end(){ach("esc",1);ach("truth",1);M("Protocol complete",`<p>The final door opens onto dawn. S is waiting with the admission form from attempt 214.</p><p>You tear it in half. Nobody locked you in here but you, and now you have chosen to leave.</p><p><b>Chapters sealed: ${S.done.length} / 15 &nbsp;·&nbsp; Playtime: ${fmtT(S.t)}</b></p>`+B("menu","Main menu"))}
+function stepH(){const L=HN[S.room]||genHN(S.room),f=F();for(let i=0;i<L.length;i++)if(L[i][0](f))return[i,L[i][1]];return[0,L[0][1]]}
 function hintUI(){const[i,h]=stepH(),n=S.hl[S.room+"-"+i]||0;M("Hints",(n?h.slice(0,n).map((x,j)=>`<p><b style="color:var(--cold)">HINT ${j+1}</b>\n${x}</p>`).join(""):"<p>Stuck? Hints go from subtle to almost direct.</p>")+(n<3?B("hn","Reveal hint "+(n+1)):"<p>No more hints for this step.</p>"))}
 /* ---------- actions ---------- */
 const ACT={close:X,
-new(){if(localStorage.getItem(KEY)&&!confirm("Start a new game? Current progress will be overwritten."))return;const st=S.set;S=DEF();S.set=st;start(1)},
+new(){if(ld()){M("New game","<p>Start a new game? Your saved progress will be overwritten.</p>"+B("newgo","Start over")+B("close","Cancel"));return}ACT.newgo()},newgo(){const st=S.set;S=DEF();S.set=st;start(1)},
 cont(){start(S.room)},
-chap(){M("Chapter select",CH.map((n,i)=>i<BUILT&&i<S.max?`<button class="mb" data-a="go" data-n="${i+1}">0${i+1} — ${n}${S.done.includes(i+1)?" ✓":""}</button>`:`<div class="mb" style="opacity:.35">0${i+1} — CLASSIFIED</div>`).join(""))},
+chap(){M("Chapter select",CH.map((n,i)=>i<BUILT&&i<S.max?`<button class="mb" data-a="go" data-n="${i+1}">${String(i+1).padStart(2,"0")} — ${n}${S.done.includes(i+1)?" ✓":""}</button>`:`<div class="mb" style="opacity:.35">${String(i+1).padStart(2,"0")} — CLASSIFIED</div>`).join(""))},
 go(d){start(+d.n)},
 set(){M("Settings",`<p>Volume</p><input id="vr" type="range" min="0" max="1" step=".05" value="${S.set.vol}" style="width:100%;margin-bottom:14px">${B("snd","Sound: "+(S.set.snd?"on":"off"))}${B("fs","Fullscreen")}${B("reset","Reset progress")}`)},
 snd(){S.set.snd=S.set.snd?0:1;vol();save();ACT.set()},
 fs(){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()},
-reset(){if(confirm("Erase ALL progress?")){localStorage.removeItem(KEY);const st=S.set;S=DEF();S.set=st;ACT.menu()}},
+reset(){M("Reset progress","<p>Erase ALL progress?</p>"+B("resetgo","Erase")+B("close","Cancel"))},resetgo(){try{localStorage.removeItem(KEY)}catch(e){}const st=S.set;S=DEF();S.set=st;X();ACT.menu()},
 cred(){M("Credits","<p>THE EXIT PROTOCOL\nA browser escape-room mystery.\n\nBuilt with HTML, CSS and JavaScript. All visuals and sound are generated in code.</p>")},
-menu(){X();$("#game").classList.remove("on");$("#menu").classList.add("on");$("[data-a=cont]").disabled=!localStorage.getItem(KEY)},
-pause(){const h=Object.values(S.rh).reduce((a,b)=>a+b,0);M("Paused",`<p>Completion ${Math.round(S.done.length/8*100)}% · Playtime ${fmtT(S.t)} · Hints used ${h}</p>`+B("close","Resume")+B("rr","Restart room")+B("ach","Achievements")+B("set","Settings")+B("menu","Main menu"))},
+menu(){X();$("#game").classList.remove("on");$("#menu").classList.add("on");$("[data-a=cont]").disabled=!ld()},
+pause(){const h=Object.values(S.rh).reduce((a,b)=>a+b,0);M("Paused",`<p>Completion ${Math.round(S.done.length/15*100)}% · Playtime ${fmtT(S.t)} · Hints used ${h}</p>`+B("close","Resume")+B("rr","Restart room")+B("ach","Achievements")+B("set","Settings")+B("menu","Main menu"))},
 ach(){M("Achievements",Object.keys(ACH).map(k=>`<p style="opacity:${S.ach.includes(k)?1:.4}"><b>${S.ach.includes(k)?"◆":"◇"} ${ACH[k][0]}</b>\n${ACH[k][1]}</p>`).join(""))},
-rr(){if(!confirm("Restart this room? Its progress and items will be reset."))return;const n=S.room;delete S.f[n];S.inv=S.inv.filter(i=>IT[i].r!=n);S.j=S.j.filter(e=>e.r!=n);start(n)},
+rr(){M("Restart room","<p>Restart this room? Its progress and items will be reset.</p>"+B("rrgo","Restart")+B("close","Cancel"))},rrgo(){const n=S.room;delete S.f[n];S.inv=S.inv.filter(i=>IT[i].r!=n);S.j=S.j.filter(e=>e.r!=n);start(n)},
 journal(){M("Investigation journal",S.j.length?S.j.map(e=>`<p><b style="color:var(--cold)">${e.t}</b>\n${e.x}</p>`).join(""):"<p>Nothing recorded yet. Inspect things.</p>")},
 hint(){hintUI()},hn(){const[i]=stepH(),k=S.room+"-"+i;S.hl[k]=(S.hl[k]||0)+1;S.rh[S.room]=(S.rh[S.room]||0)+1;save();hintUI()},
 item(d){const i=IT[d.i];sfx("click");M(i.n,`<div class="sl" style="margin-bottom:12px"><svg viewBox="0 0 24 24">${IC[i.t]}</svg></div><p>${i.x}</p>`)},
@@ -232,9 +283,22 @@ q(d){sfx("key");Q.push(d.v);$("#qd").textContent=Q.concat(["_","_","_","_"]).sli
 if(Q.join("")==="CADB"){const f=F();f.cab=1;give("tape",1);give("card",1);sfx("ok");jr("tp","Admission tape","02:13:50 — SUBJECT 001 ARRIVES. STATUS: VOLUNTARY. The signature on file is in your handwriting.");const v=f.v||{};ach("obs",f.board&&Object.keys(v).length==4);renderAll();glitch();M("Tape 0114","<p class='mono'>02:13:50 — ADMISSION LOG\nSUBJECT 001 ARRIVES.\nSTATUS: VOLUNTARY.\nSIGNATURE ON FILE.</p><p>The footage shows the entrance, and a figure signing a form without hesitation. The handwriting is yours.</p><p>Whoever locked you in here, you walked in on your own.</p><p>The cabinet also held an exit keycard.</p>"+B("close","Continue"));save()}
 else{sfx("bad");Q=[];$("#qd").textContent="_ _ _ _";$("#km").textContent="Wrong sequence. The cabinet buzzes."}},
 uc(){F().open=1;save();X();sfx("door");$(".door").classList.add("open");$(".led").classList.add("g");setTimeout(fin,2000)}};
+const pt=k=>{if(S.set.snd&&AX)tn(260+k*120,.2,"sine",.12)};
+Object.assign(ACT,{pa(){const v=norm($("#pi").value);cp.p.a.map(norm).includes(v)?psolve():pbad("Rejected.")},
+po(d){sfx("key");PS.push(+d.v);$("#od").textContent=PS.join("   ");if(PS.length<cp.p.N)return;if(JSON.stringify(PS)==JSON.stringify(cp.p.ans))psolve();else{PS=[];$("#od").innerHTML="&nbsp;";pbad("Wrong order. Cleared.")}},
+pc(){PS=[];$("#od").innerHTML="&nbsp;"},
+pl(d){sfx("key");tgl(PL,cp.p.z,+d.v);$("#lg").innerHTML=lgh();if(PL.every(v=>!v))psolve()},
+yplay(){if(MT)return;const p=cp.p,sp=Math.max(320,700-S.room*25),pads=[...$("#yp").children];PS=[];MT=1;
+p.seq.forEach((c,j)=>setTimeout(()=>{pads[c].style.opacity=1;pt(c);setTimeout(()=>pads[c].style.opacity=.45,sp*.6)},400+j*sp));setTimeout(()=>MT=0,400+p.seq.length*sp)},
+py(d){if(MT)return;const k=+d.v,p=cp.p,pads=[...$("#yp").children];pt(k);pads[k].style.opacity=1;setTimeout(()=>pads[k].style.opacity=.45,150);PS.push(k);const j=PS.length-1;
+if(PS[j]!=p.seq[j]){PS=[];pbad("Wrong pad. Sequence reset.");return}if(PS.length==p.seq.length)psolve()},
+kk(d){sfx("key");const P=LV(S.room),v=d.v,bl=Array(P.ns).fill("_").join(" ");
+if(v==="C")K="";else if(v==="OK"){if(K===P.code){const f=F();f.open=1;save();sfx("ok");X();glitch();setTimeout(()=>{const e=$(".door");if(e){e.classList.add("open");$(".led").classList.add("g");sfx("door")}setTimeout(fin,1800)},500)}else{sfx("bad");K="";$("#kd").textContent=bl;$("#km").textContent="ACCESS DENIED."}return}
+else if(K.length<P.ns)K+=v;$("#kd").textContent=K.padEnd(P.ns,"_").split("").join(" ")}});
+addEventListener("keydown",e=>{if(e.key=="Enter"&&isOpen()&&$("#pi"))ACT.pa()});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(b&&ACT[b.dataset.a])ACT[b.dataset.a](b.dataset)});
 document.addEventListener("input",e=>{if(e.target.id=="vr"){S.set.vol=+e.target.value;vol();save()}});
 addEventListener("keydown",e=>{if(!$("#game").classList.contains("on"))return;const k=e.key.toLowerCase();if(k=="escape")isOpen()?X():ACT.pause();else if(!isOpen()){if(k=="j")ACT.journal();if(k=="h")ACT.hint()}});
 setInterval(()=>{if($("#game").classList.contains("on")&&!document.hidden){S.t++;if(S.t%10==0)save()}},1000);
-$("[data-a=cont]").disabled=!localStorage.getItem(KEY);
+$("[data-a=cont]").disabled=!ld();
 </script></body></html>
