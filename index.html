@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>The Exit Protocol</title>
+<style>
+:root{--ink:#cfd8e3;--dim:#7d8a99;--cold:#8fb8e8;--red:#d6453d;--line:rgba(160,190,225,.16);--n:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E")}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:#020304;color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+.mono,.kd,.mon p,.cam span{font-family:Consolas,"Cascadia Mono",monospace}
+.screen{position:fixed;inset:0;display:none}.screen.on{display:block}
+#menu{background:#04060a;overflow:hidden}
+.corr,.corr i,.corr b{position:absolute;inset:0;display:block}
+.cc{clip-path:polygon(0 0,100% 0,63% 36%,37% 36%);background:linear-gradient(#06080b,#1b232d)}
+.cf{clip-path:polygon(0 100%,100% 100%,63% 64%,37% 64%);background:linear-gradient(#0e141b,#27323f 70%,#3d4e62)}
+.cl{clip-path:polygon(0 0,37% 36%,37% 64%,0 100%);background:linear-gradient(90deg,#07090c,#1d2630)}
+.cr{clip-path:polygon(100% 0,63% 36%,63% 64%,100% 100%);background:linear-gradient(270deg,#07090c,#1d2630)}
+.cb{clip-path:polygon(37% 36%,63% 36%,63% 64%,37% 64%);background:radial-gradient(ellipse at 50% 60%,#33475c,#0b1016 75%)}
+.corr b.lt{inset:auto;background:#dbeaff;box-shadow:0 0 30px 8px rgba(160,200,255,.45);animation:fl 6s infinite}
+.corr b.rl{inset:auto;left:49.2%;top:47%;width:1.6%;aspect-ratio:1;border-radius:50%;background:var(--red);box-shadow:0 0 30px 10px rgba(214,69,61,.55);animation:pl 2.4s infinite}
+.fg{background:radial-gradient(ellipse 50% 30% at 30% 60%,rgba(140,170,210,.13),transparent),radial-gradient(ellipse 40% 25% at 70% 50%,rgba(140,170,210,.1),transparent);animation:dr 24s ease-in-out infinite alternate}
+.nz{background:var(--n);opacity:.14;mix-blend-mode:overlay;pointer-events:none}
+.vg{background:radial-gradient(ellipse at 50% 50%,transparent 35%,rgba(0,0,0,.9));pointer-events:none}
+.mc{position:absolute;left:7vw;top:50%;transform:translateY(-50%);z-index:3;max-width:86vw}
+.mc h1{font-weight:300;font-size:clamp(28px,5.2vw,74px);letter-spacing:.28em;line-height:1.1;text-shadow:0 0 30px rgba(143,184,232,.35)}
+.mc h1 b{font-weight:700;display:block;color:#fff}
+.tg{margin:14px 0 38px;color:var(--dim);letter-spacing:.3em;font-size:clamp(9px,1.1vw,13px)}
+.mb{display:block;width:100%;padding:9px 0 9px 18px;letter-spacing:.32em;font-size:14px;color:#aab6c4;border-left:1px solid transparent;transition:.25s;text-align:left}
+.mb:hover,.mb:focus-visible{color:#fff;padding-left:30px;border-color:var(--cold);background:linear-gradient(90deg,rgba(143,184,232,.14),transparent 70%);outline:0}
+.mb:disabled{opacity:.3;pointer-events:none}
+#game{background:#020304;flex-direction:column}#game.on{display:flex}
+.top{height:46px;display:flex;align-items:center;gap:16px;padding:0 14px;border-bottom:1px solid var(--line);background:linear-gradient(#0c1015,#080a0e);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.top h2{font-size:12px;font-weight:600;color:var(--ink);letter-spacing:.22em}
+.prog{flex:1;max-width:240px;height:3px;background:#1a2028}.prog b{display:block;height:100%;background:var(--cold);transition:width .6s}
+#stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
+#scene{position:relative;aspect-ratio:16/9;width:min(100%,calc((100dvh - 108px)*16/9));overflow:hidden;background:#0a0d11;container-type:inline-size;box-shadow:0 0 80px #000}
+#scene>*{position:absolute}
+.wall{inset:0 0 28% 0;background:radial-gradient(ellipse 60% 80% at 50% 0,rgba(150,185,230,.24),transparent 70%),linear-gradient(#1c242c,#11161b)}
+.wall::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 24.8%,rgba(0,0,0,.4) 24.8% 25%),repeating-linear-gradient(0deg,transparent 0 33%,rgba(0,0,0,.28) 33% 33.2%);}
+.floor{inset:72% 0 0 0;background:radial-gradient(ellipse 40% 60% at 50% 0,rgba(150,185,230,.2),transparent),linear-gradient(#1d252d,#0b0e12);border-top:1px solid #000}
+.pipe{height:2.4%;background:linear-gradient(#5b6671,#232a31 60%,#101316);box-shadow:0 .6cqw 1cqw rgba(0,0,0,.5)}
+.wl{width:2cqw;height:2cqw;border-radius:50%;background:radial-gradient(#ff9a90,var(--red));box-shadow:0 0 3cqw 1cqw rgba(214,69,61,.5);animation:pl 2.2s infinite}
+.cone{left:28%;top:0;width:44%;height:78%;background:linear-gradient(rgba(180,210,255,.2),transparent);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);animation:fl 7s infinite;pointer-events:none}
+#scene .vg,#scene .nz{inset:0}
+#scene .nz{opacity:.1}
+.dp{width:2px;height:2px;background:#cfe4ff;opacity:.35;border-radius:50%;animation:dd 12s linear infinite;pointer-events:none}
+.gl{animation:gl .7s steps(8)}
+.hs{display:block;transition:filter .25s}
+.hs:hover,.hs:focus-visible{filter:drop-shadow(0 0 .7cqw rgba(143,184,232,.95)) brightness(1.3);outline:0}
+.hs::after{content:attr(data-l);position:absolute;left:50%;bottom:100%;transform:translate(-50%,-4px);background:rgba(6,8,12,.92);border:1px solid var(--line);padding:2px 9px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;opacity:0;pointer-events:none;transition:.2s;z-index:5}
+.hs:hover::after,.hs:focus-visible::after{opacity:1}
+.hs>*{position:absolute;inset:0}
+.dbox{overflow:hidden;background:radial-gradient(ellipse at 50% 40%,rgba(160,210,255,.4),#000 75%)}
+.door{background:linear-gradient(90deg,#29313a,#404b58 40%,#29313a);border:.5cqw solid #141920;box-shadow:inset 0 0 2cqw #000;transition:transform 1.8s cubic-bezier(.7,0,.3,1)}
+.door::before{content:"";position:absolute;inset:7% 14%;border:1px solid rgba(255,255,255,.08);background:linear-gradient(#222a32,#192027)}
+.door.open{transform:translateY(-101%)}
+.hs .led{inset:auto;right:-2%;top:44%;width:1.2cqw;height:1.2cqw;border-radius:50%;background:var(--red);box-shadow:0 0 1.5cqw var(--red);animation:pl 1.6s infinite}
+.led.g{background:#4be38a;box-shadow:0 0 1.5cqw #4be38a;animation:none}
+.desk .t{inset:0 0 86% 0;background:linear-gradient(#636a72,#33383e);box-shadow:0 .6cqw 1.2cqw rgba(0,0,0,.6)}
+.desk .b{inset:14% 3% 0;background:linear-gradient(90deg,#1b2025,#2b3238 50%,#1b2025)}
+.desk .d{inset:26% 30% 18%;border:1px solid #0a0c0f;background:#252b32}
+.desk .d::after{content:"";position:absolute;left:40%;right:40%;top:42%;height:6%;background:#8a949f}
+.mon .s{inset:0 0 18% 0;background:#04100a;border:.45cqw solid #14181d;border-radius:.4cqw;box-shadow:0 0 3cqw rgba(110,200,255,.28),inset 0 0 2cqw #000;overflow:hidden}
+.cam::before,.mon .s::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 1px,transparent 1px 3px);animation:sc 5s linear infinite;z-index:2}
+.mon p{padding:6% 7%;color:#7fe8b0;font-size:.95cqw;line-height:1.5;text-shadow:0 0 .6cqw #3fd88a}
+.mon .st{inset:auto 38% 0;height:18%;background:#1b2026}
+.vent{background:repeating-linear-gradient(#050607 0 .35cqw,#4d555e .35cqw .85cqw);border:.4cqw solid #5d656e;box-shadow:inset 0 0 1cqw #000}
+.vent.off{background:#020303;transform:rotate(-3deg) translate(3%,8%)}
+.hs svg{width:100%;height:100%;display:block}
+.cam{background:linear-gradient(135deg,#0d2018,#06100b);border:.5cqw solid #12171c;box-shadow:0 0 2.5cqw rgba(120,230,170,.2);animation:fl 5s infinite}
+.cam svg{position:absolute;inset:0;opacity:.85}
+.cam span{inset:auto auto 3% 5%;position:absolute;font-size:.9cqw;color:#7fe8b0;z-index:3}
+.board{background:#241f1a;border:.5cqw solid #3a3128}
+.board i{position:absolute;width:26%;height:26%;background:linear-gradient(#9aa4ae,#5d6670);border:.3cqw solid #d9d9d2}
+.board i.r{box-shadow:0 0 0 .4cqw var(--red)}
+.cab{background:linear-gradient(90deg,#1c2229,#38434f 50%,#1c2229);border:.4cqw solid #0e1216}
+.cab i{position:absolute;bottom:8%;width:12%;aspect-ratio:1;border-radius:50%;background:#5a1d1a;box-shadow:0 0 .8cqw #d6453d}
+.cab.on i{background:#2c8a55;box-shadow:0 0 .8cqw #4be38a}
+.bar{height:62px;display:flex;align-items:center;gap:8px;padding:0 12px;border-top:1px solid var(--line);background:linear-gradient(#0a0d11,#06080b)}
+.inv{display:flex;gap:6px;flex:1;overflow-x:auto;padding:2px}
+.sl{width:44px;height:44px;border:1px solid var(--line);background:#0d1116;display:flex;align-items:center;justify-content:center;flex:none;transition:.2s}
+button.sl:hover{border-color:var(--cold)}
+.sl svg{width:26px;height:26px;stroke:var(--cold);fill:none;stroke-width:1.6}
+.btn{display:inline-block;margin:4px 6px 4px 0;padding:9px 16px;border:1px solid var(--line);letter-spacing:.18em;font-size:12px;text-transform:uppercase;transition:.2s;color:var(--ink)}
+.btn:hover{border-color:var(--cold);color:#fff;background:rgba(143,184,232,.1)}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(2,4,6,.78);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:14px}.ov.on{display:flex}
+.pan{width:min(560px,100%);max-height:92dvh;overflow:auto;background:linear-gradient(#10151b,#0a0d11);border:1px solid var(--line);box-shadow:0 20px 80px #000;animation:in .3s ease}
+.pan header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--line);letter-spacing:.22em;font-size:12px;text-transform:uppercase;color:var(--cold)}
+.x{font-size:24px;color:var(--dim);line-height:1}
+#mb{padding:18px}#mb p{margin-bottom:12px;color:#b9c4d0;white-space:pre-line}
+#mb .mb{padding:12px 0 12px 16px}
+.msg{min-height:1.5em;color:var(--red);font-size:13px}
+.kd{font-size:28px;letter-spacing:.2em;text-align:center;padding:12px;background:#04100a;color:#7fe8b0;border:1px solid #17352a;margin-bottom:10px;text-shadow:0 0 8px #3fd88a}
+.kg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.kg button{padding:14px;border:1px solid var(--line);background:#12171d;font-size:16px}.kg button:hover{background:#1c2530}
+.ln{opacity:0;animation:in .8s forwards}
+.feed{position:relative;border:1px solid #17352a;margin-bottom:12px}.feed svg{display:block;width:100%}
+.feed span{position:absolute;left:10px;bottom:6px;color:#7fe8b0;font-size:13px}
+.tt{position:fixed;left:50%;bottom:78px;transform:translate(-50%,10px);opacity:0;background:rgba(10,14,18,.95);border:1px solid var(--cold);padding:8px 18px;font-size:13px;letter-spacing:.08em;transition:.3s;z-index:40;pointer-events:none;text-align:center;max-width:92vw}
+.tt.on{opacity:1;transform:translate(-50%,0)}
+#fade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .6s;z-index:30}#fade.on{opacity:1;pointer-events:all}
+@keyframes fl{0%,100%,40%,46%,100%{opacity:1}41%{opacity:.35}43%{opacity:.9}44%{opacity:.45}}
+@keyframes pl{50%{opacity:.35}}@keyframes sc{to{transform:translateY(6px)}}
+@keyframes dr{to{transform:translateX(8%)}}@keyframes dd{to{transform:translate(30px,-70px);opacity:0}}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes gl{20%{transform:translateX(-6px);filter:hue-rotate(60deg) brightness(1.6)}50%{transform:translateX(5px);filter:invert(.15)}80%{transform:translateX(-2px);filter:hue-rotate(-40deg)}}
+@media(max-width:700px){.top{gap:8px;font-size:9px}.btn{padding:8px 10px;letter-spacing:.1em}.mc{left:6vw}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important}}
+</style></head><body>
+<section id="menu" class="screen on">
+<div class="corr"><i class="cc"></i><i class="cf"></i><i class="cl"></i><i class="cr"></i><i class="cb"></i>
+<b class="lt" style="left:43%;width:14%;top:5%;height:1.4%"></b><b class="lt" style="left:45.5%;width:9%;top:17%;height:1%;animation-delay:-2s"></b><b class="lt" style="left:47%;width:6%;top:25%;height:.7%;animation-delay:-4s"></b><b class="lt" style="left:48%;width:4%;top:30%;height:.5%;animation-delay:-1s"></b>
+<b class="rl"></b><i class="fg"></i><i class="nz"></i><i class="vg"></i></div>
+<div class="mc"><h1>THE EXIT<b>PROTOCOL</b></h1><p class="tg">EVERY ROOM HAS A SECRET. EVERY SECRET HAS A COST.</p>
+<button class="mb" data-a="new">NEW GAME</button><button class="mb" data-a="cont" disabled>CONTINUE</button><button class="mb" data-a="chap">CHAPTER SELECT</button><button class="mb" data-a="set">SETTINGS</button><button class="mb" data-a="cred">CREDITS</button></div>
+</section>
+<section id="game" class="screen">
+<div class="top"><span id="ch"></span><h2 id="rn"></h2><div class="prog"><b id="pg"></b></div><span style="flex:1"></span><button class="btn" data-a="pause" style="margin:0">Pause</button></div>
+<div id="stage"><div id="scene"></div></div>
+<div class="bar"><div class="inv" id="inv"></div><button class="btn" data-a="journal" style="margin:0">Journal [J]</button><button class="btn" data-a="hint" style="margin:0">Hint [H]</button></div>
+</section>
+<div id="modal" class="ov"><div class="pan" role="dialog" aria-modal="true"><header><span id="mt"></span><button class="x" data-a="close" aria-label="Close">×</button></header><div id="mb"></div></div></div>
+<div id="tt" class="tt"></div><div id="fade"></div>
+<script>
+"use strict";
+const $=s=>document.querySelector(s),KEY="tep_save_v1",BUILT=2;
+const DEF=()=>({room:1,max:1,inv:[],j:[],f:{},hl:{},rh:{},t:0,ach:[],done:[],set:{vol:.6,snd:1}});
+let S=DEF(),K="",Q=[];
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s)S=Object.assign(DEF(),s)}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}},F=()=>S.f[S.room]||(S.f[S.room]={}),has=i=>S.inv.includes(i);
+const CH=["The Awakening","The Observation Room","The Archive","The Signal Room","The Laboratory","The Reactor","The Control Room","The Exit"];
+const ACH={first:["First Discovery","Complete the first room."],obs:["Observer","Find every hidden clue in a room."],nohelp:["No Help Needed","Complete a room without hints."],arch:["Archivist","Collect all documents."],truth:["The Truth Seeker","Discover all major story revelations."],esc:["Escaped","Complete the game."]};
+const IC={doc:"<path d='M6 3h9l4 4v14H6zM9 12h7M9 16h7'/>",tool:"<path d='M4 20l9-9M13 11l-2-4 3-3 4 2-1 4z'/>",card:"<rect x='3' y='6' width='18' height='12' rx='1.5'/><path d='M3 10h18'/>",tape:"<rect x='3' y='6' width='18' height='12' rx='1.5'/><circle cx='9' cy='12' r='2'/><circle cx='15' cy='12' r='2'/>"};
+const IT={
+note1:{n:"Handwritten note",t:"doc",r:1,x:"If you are reading this, the door has already decided about you.\n\nThe wall clock was stopped the moment they brought you in. The monitor will want that moment: four digits, hours then minutes.\n\nDo not trust the voice.   — S"},
+driver:{n:"Screwdriver",t:"tool",r:1,x:"Flat-head. The tip is worn from small screws."},
+badge:{n:"Access badge",t:"card",r:1,x:"SUBJECT 001. The photo is blank. The name field has been scratched out."},
+tape:{n:"Tape 0114",t:"tape",r:2,x:"Archive tape. Label: ADMISSION — SUBJECT 001."},
+card:{n:"Exit keycard",t:"card",r:2,x:"LEVEL 2 CLEARANCE. Issued to: nobody."}};
+/* ---------- audio (starts only after first click) ---------- */
+let AX,MG;
+function au(){try{if(!AX){AX=new(window.AudioContext||window.webkitAudioContext)();MG=AX.createGain();MG.gain.value=S.set.snd?S.set.vol:0;MG.connect(AX.destination);const l=AX.createBiquadFilter();l.type="lowpass";l.frequency.value=200;const g=AX.createGain();g.gain.value=.1;[55,55.6,82.4].forEach(f=>{const o=AX.createOscillator();o.type="sawtooth";o.frequency.value=f;o.connect(l);o.start()});l.connect(g);g.connect(MG)}AX.resume&&AX.resume()}catch(e){}}
+const vol=()=>{if(MG)MG.gain.value=S.set.snd?S.set.vol:0};
+function tn(f,d,ty,v,s){if(!AX)return;const o=AX.createOscillator(),g=AX.createGain(),t=AX.currentTime+(s||0);o.type=ty||"sine";o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v||.15,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(MG);o.start(t);o.stop(t+d+.05)}
+const SFX={click:()=>tn(1400,.04,"square",.04),key:()=>tn(900,.05,"square",.06),ok:()=>{tn(523,.2,"sine",.15);tn(784,.35,"sine",.15,.12)},bad:()=>{tn(120,.3,"sawtooth",.14);tn(90,.35,"sawtooth",.14,.1)},item:()=>{tn(1000,.08,"triangle",.12);tn(1500,.12,"triangle",.1,.07)},door:()=>{tn(60,1.4,"sawtooth",.2);tn(45,1.6,"square",.1,.1)},pc:()=>{tn(300,.1,"square",.06);tn(600,.1,"square",.06,.08);tn(900,.15,"square",.06,.16)}};
+const sfx=n=>{if(S.set.snd&&AX)SFX[n]()};
+document.addEventListener("pointerdown",au,{once:true});
+/* ---------- helpers ---------- */
+let tto;const toast=m=>{const e=$("#tt");e.textContent=m;e.classList.add("on");clearTimeout(tto);tto=setTimeout(()=>e.classList.remove("on"),2800)};
+const M=(t,b)=>{$("#mt").textContent=t;$("#mb").innerHTML=b;$("#modal").classList.add("on")},X=()=>$("#modal").classList.remove("on"),isOpen=()=>$("#modal").classList.contains("on");
+const B=(a,l,d="")=>`<button class="btn" data-a="${a}" ${d}>${l}</button>`;
+const jr=(k,t,x)=>{if(!S.j.some(e=>e.k==k))S.j.push({k,t,x,r:S.room});save()};
+function give(id,quiet){if(has(id))return;S.inv.push(id);sfx("item");if(!quiet)toast("Picked up: "+IT[id].n);renderInv();save()}
+function ach(k,c){if(c&&!S.ach.includes(k)){S.ach.push(k);toast("Achievement: "+ACH[k][0]);save()}}
+function glitch(){const s=$("#scene");s.classList.add("gl");setTimeout(()=>s.classList.remove("gl"),750)}
+function trans(fn){const e=$("#fade");e.classList.add("on");setTimeout(()=>{fn();e.classList.remove("on")},700)}
+const fmtT=s=>Math.floor(s/60)+"m "+s%60+"s";
+const keypad=()=>`<div class="kd" id="kd">_ _ _ _</div><div class="kg">${[1,2,3,4,5,6,7,8,9,"C",0,"OK"].map(v=>`<button data-a="k" data-v="${v}">${v}</button>`).join("")}</div><p class="msg" id="km"></p>`;
+function clk(big){let t="";for(let i=0;i<60;i++){const a=i*Math.PI/30,l=i%5?2:5;t+=`<line x1='${50+Math.sin(a)*44}' y1='${50-Math.cos(a)*44}' x2='${50+Math.sin(a)*(44-l)}' y2='${50-Math.cos(a)*(44-l)}' stroke='#9aa' stroke-width='${i%5?.4:1}' />`}
+for(let h=1;h<=12;h++){const a=h*Math.PI/6;t+=`<text x='${50+Math.sin(a)*32}' y='${50-Math.cos(a)*32+3}' text-anchor='middle' font-size='8' fill='#cdd'>${h}</text>`;if(big)t+=`<text x='${50+Math.sin(a)*50.5}' y='${50-Math.cos(a)*50.5+1.5}' text-anchor='middle' font-size='3.6' fill='#8a9'>${h*5}</text>`}
+const p=(d,l)=>`x2='${50+Math.sin(d*Math.PI/180)*l}' y2='${50-Math.cos(d*Math.PI/180)*l}'`;
+return `<svg viewBox='-6 -6 112 112'><circle cx='50' cy='50' r='47' fill='#0e1216' stroke='#566' stroke-width='2.5' />${t}<line x1='50' y1='50' ${p(250,22)} stroke='#dde' stroke-width='3' stroke-linecap='round' /><line x1='50' y1='50' ${p(120,34)} stroke='#dde' stroke-width='1.8' stroke-linecap='round' /><circle cx='50' cy='50' r='2' fill='#dde' /></svg>`}
+const CAMS={A:"02:14:09",B:"02:14:31",C:"02:13:50",D:"02:14:20"};
+const CD={A:"The corridor outside the observation room. A door at the far end stands ajar.",B:"The same corridor, later. Every light is off except the red emergency strip.",C:"The facility entrance. A figure steps inside, alone. The face is turned from the camera.",D:"The lobby. A chair is pulled out from a desk. Nobody sits in it."};
+const fsvg=c=>`<svg viewBox='0 0 160 90'><rect width='160' height='90' fill='#0b1410' /><path d='M0 0L50 25V65L0 90M160 0L110 25V65L160 90M50 25H110V65H50Z' fill='none' stroke='#2f5a46' stroke-width='1' />${({A:"<rect x='96' y='30' width='10' height='34' fill='#9fe8c0' opacity='.5' />",B:"<rect x='0' y='0' width='160' height='3' fill='#d6453d' opacity='.8' />",C:"<circle cx='80' cy='38' r='5' fill='#9fe8c0' /><rect x='74' y='43' width='12' height='22' fill='#9fe8c0' />",D:"<rect x='70' y='48' width='18' height='12' fill='#6aa88a' />"})[c]}</svg>`;
+/* ---------- rooms ---------- */
+const base='<div class="wall"></div><div class="floor"></div><i class="pipe" style="left:0;top:3%;width:100%"></i><i class="wl" style="left:90%;top:6%"></i>';
+const R=[{n:CH[0],art:()=>base+'<i class="pipe" style="left:0;top:9%;width:30%"></i>',obj:[
+{i:"door",l:"Door",x:70,y:13,w:19,h:72,a:f=>`<div class="dbox"><div class="door ${f.open?"open":""}"></div></div><i class="led ${f.open?"g":""}"></i>`},
+{i:"desk",l:"Desk",x:24,y:60,w:40,h:26,a:()=>'<div class="desk"><b class="t"></b><b class="b"></b><b class="d"></b></div>'},
+{i:"mon",l:"Monitor",x:34,y:38,w:17,h:22,a:f=>`<div class="mon"><div class="s"><p>${f.mon?"&gt; BADGE READ<br>&gt; SUBJECT 001<br>&gt; ENTER ACCESS CODE_":"CONTAINMENT<br>PROTOCOL ACTIVE.<br>&gt; BADGE REQUIRED_"}</p></div><i class="st"></i></div>`},
+{i:"clock",l:"Wall clock",x:10,y:13,w:8,ar:1,a:()=>clk(0)},
+{i:"vent",l:"Ventilation panel",x:40,y:8,w:15,h:12,a:f=>`<div class="vent ${f.vent?"off":""}"></div>`}]},
+{n:CH[1],art:()=>base,obj:[
+...["A","B","C","D"].map((c,k)=>({i:"c"+c,l:"Camera "+c,x:6+k*21,y:8,w:20,h:24,a:()=>`<div class="cam">${fsvg(c)}<span>CAM ${c}</span></div>`})),
+{i:"board",l:"Photograph wall",x:4,y:40,w:22,h:38,a:()=>'<div class="board"><i style="left:8%;top:8%;transform:rotate(-4deg)"></i><i class="r" style="left:38%;top:12%;transform:rotate(3deg)"></i><i style="left:66%;top:6%;transform:rotate(-2deg)"></i><i style="left:10%;top:42%;transform:rotate(2deg)"></i><i style="left:40%;top:48%;transform:rotate(-3deg)"></i><i style="left:66%;top:44%;transform:rotate(4deg)"></i></div>'},
+{i:"door",l:"Door",x:40,y:40,w:14,h:46,a:f=>`<div class="dbox"><div class="door ${f.open?"open":""}"></div></div><i class="led ${f.open?"g":""}"></i>`},
+{i:"cab",l:"Security cabinet",x:70,y:40,w:20,h:46,a:f=>`<div class="cab ${f.cab?"on":""}"><i style="left:12%"></i><i style="left:32%"></i><i style="left:52%"></i><i style="left:72%"></i></div>`}]}];
+const HN={1:[[f=>!f.desk,["Start with the largest piece of furniture.","Something in the desk is not fully closed.","Open the desk drawer: a note and a screwdriver are inside."]],
+[f=>!f.vent,["Screws are meant to be turned.","The vent cover is held by screws, and you now own a tool.","Use the screwdriver on the ventilation panel."]],
+[f=>!f.mon,["The monitor wants something physical.","It has a reader slot, and you found a card.","Insert the badge into the monitor."]],
+[f=>!f.open,["The note mentions a clock. There is one on the wall.","The code is four digits: the clock time, written HHMM.","The hands are frozen at 8:20. Enter 0820."]],
+[()=>1,["The door is open.","Walk through it.","Click the door."]]],
+2:[[f=>Object.keys(f.v||{}).length<4,["Every screen shows something different. Check each one.","Each feed carries a timestamp. Read all four.","A 02:14:09, B 02:14:31, C 02:13:50, D 02:14:20."]],
+[f=>!f.cab,["The photograph wall has a note about order.","Press the cabinet buttons in the order the events happened, earliest first.","Press C, A, D, B."]],
+[()=>1,["The cabinet gave you more than footage.","A keycard opens a reader.","Use the keycard on the door."]]]};
+const OB={1:{
+desk(f){M("Desk",f.desk?"<p>The drawer is empty. Dust, and a pale rectangle where the note was.</p>":"<p>Cold steel, ring stains from cups nobody remembers. The bottom drawer is not quite closed.</p>"+B("dk","Open the drawer"))},
+clock(){M("Wall clock",`<div style="width:min(300px,80%);margin:0 auto 12px">${clk(1)}</div><p>The glass is cracked and the second hand is missing. The hands have not moved in a very long time.</p>`)},
+vent(f){M("Ventilation panel",f.vent?"<p>The panel hangs open. Nothing else is behind it.</p>":"<p>Four screws hold the cover on. Something metallic glints behind the slats.</p>"+(has("driver")?B("vv","Use screwdriver"):""))},
+mon(f){if(f.open)M("Terminal","<p class='mono'>SUBJECT 001: ACCEPTED.</p>");else if(f.mon){K="";M("Terminal","<p class='mono'>&gt; ENTER ACCESS CODE</p>"+keypad())}else M("Terminal","<p class='mono'>CONTAINMENT PROTOCOL ACTIVE.\nIDENTITY UNKNOWN.\nEXIT ACCESS DENIED.\n&gt; BADGE REQUIRED.</p><p>A reader slot is built into the base. It is empty.</p>"+(has("badge")?B("ib","Insert badge"):""))},
+door(f){if(f.open)fin();else M("Door","<p>Sealed. A dark panel beside it answers only to the monitor on the desk.</p>")}},
+2:{board(f){f.board=1;jr("bd","Photograph wall","Dozens of pinned photographs of one entrance. One is circled in red: SUBJECT 001. A note beside it reads: \"Playback means nothing out of order. Earliest first.\"");M("Photograph wall","<p>Dozens of pinned photographs: staff, corridors, one entrance from every angle. One is circled in red. The label under it reads SUBJECT 001.</p><p>A scrap of paper is pinned beside it:\n“Playback means nothing out of order. Earliest first.”</p>");save()},
+cab(f){if(f.cab){M("Security cabinet","<p>The cabinet is empty. Its lamps are green.</p>");return}Q=[];M("Security cabinet",`<p>A sealed cabinet with four buttons, one per camera. Every press is logged.</p><div class="kd" id="qd">_ _ _ _</div><div class="kg" style="grid-template-columns:repeat(4,1fr)">${"ABCD".split("").map(c=>`<button data-a="q" data-v="${c}">CAM ${c}</button>`).join("")}</div><p class="msg" id="km"></p>`)},
+door(f){if(f.open)fin();else M("Door","<p>A card reader glows red beside the door.</p>"+(has("card")?B("uc","Use keycard"):""))}}};
+["A","B","C","D"].forEach(c=>OB[2]["c"+c]=()=>{const f=F();f.v=f.v||{};f.v[c]=1;jr("cam"+c,"Camera "+c,"Timestamp: "+CAMS[c]+". "+CD[c]);M("Camera "+c,`<div class="feed">${fsvg(c)}<span>CAM ${c} &nbsp; ${CAMS[c]}</span></div><p>${CD[c]}</p>`);if(Object.keys(f.v).length==4&&!f.all){f.all=1;toast("You have reviewed every feed.")}save()});
+/* ---------- rendering ---------- */
+function renderInv(){$("#inv").innerHTML=S.inv.map(i=>`<button class="sl" data-a="item" data-i="${i}" title="${IT[i].n}" aria-label="${IT[i].n}"><svg viewBox="0 0 24 24">${IC[IT[i].t]}</svg></button>`).join("")||'<span style="color:var(--dim);font-size:12px;letter-spacing:.15em">INVENTORY EMPTY</span>'}
+function renderAll(){const r=R[S.room-1],f=F();$("#ch").textContent="Chapter 0"+S.room+" / 08";$("#rn").textContent=r.n;$("#pg").style.width=S.done.length/8*100+"%";
+let d="";for(let i=0;i<14;i++)d+=`<i class="dp" style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:-${Math.random()*12}s"></i>`;
+$("#scene").innerHTML=r.art(f)+r.obj.map(o=>`<button class="hs" data-a="obj" data-o="${o.i}" data-l="${o.l}" aria-label="${o.l}" style="left:${o.x}%;top:${o.y}%;width:${o.w}%;${o.ar?"aspect-ratio:1":"height:"+o.h+"%"}">${o.a(f)}</button>`).join("")+'<div class="cone"></div>'+d+'<div class="vg"></div><div class="nz"></div>';renderInv()}
+function start(n){S.room=n;if(n>S.max)S.max=n;$("#menu").classList.remove("on");$("#game").classList.add("on");X();renderAll();save();if(!F().seen){F().seen=1;save();intro(n)}}
+function intro(n){if(n==1){const L=["CONTAINMENT PROTOCOL ACTIVE.","IDENTITY UNKNOWN.","EXIT ACCESS DENIED.","YOUR TEST BEGINS NOW."];sfx("pc");M("Terminal",`<p>You wake on cold concrete. A screen flickers on across the room.</p><div class="kd" style="text-align:left;font-size:14px;letter-spacing:.1em">${L.map((l,i)=>`<div class="ln" style="animation-delay:${i*1.1+.6}s">${l}</div>`).join("")}</div>`+B("close","Begin",'style="animation:in 1s 5s both"'))}
+else M("Observation Room","<p class='mono'>SUBJECT 001: ACCEPTED.\nPROCEEDING TO OBSERVATION.</p><p>Four screens. A wall of photographs. A sealed cabinet. Someone has been watching this place for a very long time.</p>"+B("close","Look around"))}
+function fin(){const n=S.room;if(!S.done.includes(n))S.done.push(n);ach("first",n==1);if(!S.rh[n])ach("nohelp",1);save();
+if(n<BUILT)trans(()=>start(n+1));else end()}
+function end(){M("To be continued",`<p>You step through the door. The next chamber is dark, and something inside it is already humming.</p><p><b>Chapters sealed: ${S.done.length} / 8 &nbsp;·&nbsp; Playtime: ${fmtT(S.t)}</b></p><p>Chapter 03 — The Archive — is still being built.</p>`+B("menu","Main menu"))}
+function stepH(){const L=HN[S.room],f=F();for(let i=0;i<L.length;i++)if(L[i][0](f))return[i,L[i][1]];return[0,L[0][1]]}
+function hintUI(){const[i,h]=stepH(),n=S.hl[S.room+"-"+i]||0;M("Hints",(n?h.slice(0,n).map((x,j)=>`<p><b style="color:var(--cold)">HINT ${j+1}</b>\n${x}</p>`).join(""):"<p>Stuck? Hints go from subtle to almost direct.</p>")+(n<3?B("hn","Reveal hint "+(n+1)):"<p>No more hints for this step.</p>"))}
+/* ---------- actions ---------- */
+const ACT={close:X,
+new(){if(localStorage.getItem(KEY)&&!confirm("Start a new game? Current progress will be overwritten."))return;const st=S.set;S=DEF();S.set=st;start(1)},
+cont(){start(S.room)},
+chap(){M("Chapter select",CH.map((n,i)=>i<BUILT&&i<S.max?`<button class="mb" data-a="go" data-n="${i+1}">0${i+1} — ${n}${S.done.includes(i+1)?" ✓":""}</button>`:`<div class="mb" style="opacity:.35">0${i+1} — CLASSIFIED</div>`).join(""))},
+go(d){start(+d.n)},
+set(){M("Settings",`<p>Volume</p><input id="vr" type="range" min="0" max="1" step=".05" value="${S.set.vol}" style="width:100%;margin-bottom:14px">${B("snd","Sound: "+(S.set.snd?"on":"off"))}${B("fs","Fullscreen")}${B("reset","Reset progress")}`)},
+snd(){S.set.snd=S.set.snd?0:1;vol();save();ACT.set()},
+fs(){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()},
+reset(){if(confirm("Erase ALL progress?")){localStorage.removeItem(KEY);const st=S.set;S=DEF();S.set=st;ACT.menu()}},
+cred(){M("Credits","<p>THE EXIT PROTOCOL\nA browser escape-room mystery.\n\nBuilt with HTML, CSS and JavaScript. All visuals and sound are generated in code.</p>")},
+menu(){X();$("#game").classList.remove("on");$("#menu").classList.add("on");$("[data-a=cont]").disabled=!localStorage.getItem(KEY)},
+pause(){const h=Object.values(S.rh).reduce((a,b)=>a+b,0);M("Paused",`<p>Completion ${Math.round(S.done.length/8*100)}% · Playtime ${fmtT(S.t)} · Hints used ${h}</p>`+B("close","Resume")+B("rr","Restart room")+B("ach","Achievements")+B("set","Settings")+B("menu","Main menu"))},
+ach(){M("Achievements",Object.keys(ACH).map(k=>`<p style="opacity:${S.ach.includes(k)?1:.4}"><b>${S.ach.includes(k)?"◆":"◇"} ${ACH[k][0]}</b>\n${ACH[k][1]}</p>`).join(""))},
+rr(){if(!confirm("Restart this room? Its progress and items will be reset."))return;const n=S.room;delete S.f[n];S.inv=S.inv.filter(i=>IT[i].r!=n);S.j=S.j.filter(e=>e.r!=n);start(n)},
+journal(){M("Investigation journal",S.j.length?S.j.map(e=>`<p><b style="color:var(--cold)">${e.t}</b>\n${e.x}</p>`).join(""):"<p>Nothing recorded yet. Inspect things.</p>")},
+hint(){hintUI()},hn(){const[i]=stepH(),k=S.room+"-"+i;S.hl[k]=(S.hl[k]||0)+1;S.rh[S.room]=(S.rh[S.room]||0)+1;save();hintUI()},
+item(d){const i=IT[d.i];sfx("click");M(i.n,`<div class="sl" style="margin-bottom:12px"><svg viewBox="0 0 24 24">${IC[i.t]}</svg></div><p>${i.x}</p>`)},
+obj(d){sfx("click");OB[S.room][d.o](F())},
+dk(){const f=F();f.desk=1;give("note1",1);give("driver",1);toast("Picked up: note, screwdriver");jr("n1","Note from the desk",IT.note1.x);M("Desk","<p>Inside: a folded note and a flat-head screwdriver.</p>"+B("close","Close"))},
+vv(){F().vent=1;give("badge");jr("bg","Hidden badge","Taped behind the vent: an access badge marked SUBJECT 001. The name is scratched out.");renderAll();M("Ventilation panel","<p>The screws come loose. Behind the panel, taped to the duct: an access badge.</p>"+B("close","Close"))},
+ib(){F().mon=1;save();renderAll();sfx("pc");OB[1].mon(F())},
+k(d){sfx("key");const v=d.v;if(v==="C")K="";else if(v==="OK"){if(K==="0820"){const f=F();f.open=1;save();sfx("ok");jr("ac","Access granted","The monitor accepted the clock time as a code and called you SUBJECT 001: ACCEPTED.");M("Terminal","<p class='mono'>CODE ACCEPTED.\nSUBJECT 001: ACCEPTED.</p><p>Somewhere behind the wall, a lock releases.</p>"+B("close","Continue"));glitch();setTimeout(()=>{const e=$(".door");if(e){e.classList.add("open");$(".led").classList.add("g");sfx("door")}},900)}else{sfx("bad");K="";$("#kd").textContent="_ _ _ _";$("#km").textContent="ACCESS DENIED."}return}else if(K.length<4)K+=v;$("#kd").textContent=K.padEnd(4,"_").split("").join(" ")},
+q(d){sfx("key");Q.push(d.v);$("#qd").textContent=Q.concat(["_","_","_","_"]).slice(0,4).join(" ");if(Q.length<4)return;
+if(Q.join("")==="CADB"){const f=F();f.cab=1;give("tape",1);give("card",1);sfx("ok");jr("tp","Admission tape","02:13:50 — SUBJECT 001 ARRIVES. STATUS: VOLUNTARY. The signature on file is in your handwriting.");const v=f.v||{};ach("obs",f.board&&Object.keys(v).length==4);renderAll();glitch();M("Tape 0114","<p class='mono'>02:13:50 — ADMISSION LOG\nSUBJECT 001 ARRIVES.\nSTATUS: VOLUNTARY.\nSIGNATURE ON FILE.</p><p>The footage shows the entrance, and a figure signing a form without hesitation. The handwriting is yours.</p><p>Whoever locked you in here, you walked in on your own.</p><p>The cabinet also held an exit keycard.</p>"+B("close","Continue"));save()}
+else{sfx("bad");Q=[];$("#qd").textContent="_ _ _ _";$("#km").textContent="Wrong sequence. The cabinet buzzes."}},
+uc(){F().open=1;save();X();sfx("door");$(".door").classList.add("open");$(".led").classList.add("g");setTimeout(fin,2000)}};
+document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(b&&ACT[b.dataset.a])ACT[b.dataset.a](b.dataset)});
+document.addEventListener("input",e=>{if(e.target.id=="vr"){S.set.vol=+e.target.value;vol();save()}});
+addEventListener("keydown",e=>{if(!$("#game").classList.contains("on"))return;const k=e.key.toLowerCase();if(k=="escape")isOpen()?X():ACT.pause();else if(!isOpen()){if(k=="j")ACT.journal();if(k=="h")ACT.hint()}});
+setInterval(()=>{if($("#game").classList.contains("on")&&!document.hidden){S.t++;if(S.t%10==0)save()}},1000);
+$("[data-a=cont]").disabled=!localStorage.getItem(KEY);
+</script></body></html>
