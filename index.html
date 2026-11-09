@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>The Exit Protocol</title>
-<script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
 <style>
 :root{--ink:#cfd8e3;--dim:#7d8a99;--cold:#8fb8e8;--red:#d6453d;--line:rgba(160,190,225,.16);--n:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E")}
 *{box-sizing:border-box;margin:0}
@@ -342,12 +341,12 @@ function renderInv(){$("#inv").innerHTML=S.inv.map(i=>`<button class="sl" data-a
 function renderAll(){const r=R[S.room-1],f=F();$("#ch").textContent="Chapter "+String(S.room).padStart(2,"0")+" / "+BUILT;$("#rn").textContent=r.n;$("#pg").style.width=S.done.length/BUILT*100+"%";
 let d="";for(let i=0;i<14;i++)d+=`<i class="dp" style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:-${Math.random()*12}s"></i>`;
 $("#scene").innerHTML=r.art(f)+r.obj.map(o=>`<button class="hs" data-a="obj" data-o="${o.i}" data-l="${o.l}" aria-label="${o.l}" style="left:${o.x}%;top:${o.y}%;width:${o.w}%;${o.ar?"aspect-ratio:1":"height:"+o.h+"%"}">${o.a(f)}</button>`).join("")+'<div class="cone"></div>'+d+'<div class="vg"></div><div class="nz"></div>';renderInv();const bt=0;$("#scene").style.display=bt?"none":"";$("#btq").style.display=bt?"flex":"none";if(bt){BW=0;BP=[];$("#btq").innerHTML=btUI(S.room);btInit()}}
-function start(n){gp(1);S.room=n;if(n>S.max)S.max=n;$("#menu").classList.remove("on");$("#game").classList.add("on");X();renderAll();save();if(!F().seen){F().seen=1;save();intro(n)}}
+function start(n){S.room=n;if(n>S.max)S.max=n;$("#menu").classList.remove("on");$("#game").classList.add("on");X();renderAll();save();if(!F().seen){F().seen=1;save();intro(n)}}
 function intro(n){if(n==1){const L=["CONTAINMENT PROTOCOL ACTIVE.","IDENTITY UNKNOWN.","EXIT ACCESS DENIED.","YOUR TEST BEGINS NOW."];sfx("pc");M("Terminal",`<p>You wake on cold concrete. A screen flickers on across the room.</p><div class="kd" style="text-align:left;font-size:14px;letter-spacing:.1em">${L.map((l,i)=>`<div class="ln" style="animation-delay:${i*1.1+.6}s">${l}</div>`).join("")}</div>`+B("close","Begin",'style="animation:in 1s 5s both"'))}
 else if(n>2)M(CH[n-1],"<p>"+ST[n]+"</p>"+B("close","Begin"));else M("Observation Room","<p class='mono'>SUBJECT 001: ACCEPTED.\nPROCEEDING TO OBSERVATION.</p><p>Four screens. A wall of photographs. A sealed cabinet. Someone has been watching this place for a very long time.</p>"+B("close","Look around"))}
 function fin(){const n=S.room;if(!S.done.includes(n))S.done.push(n);ach("first",n==1);if(!S.rh[n])ach("nohelp",1);save();
 if(n<BUILT)trans(()=>start(n+1));else end()}
-function end(){gp(0);ach("esc",1);ach("truth",1);M("Protocol complete",`<p>The final door opens onto dawn. S is waiting with the admission form from attempt 214.</p><p>You tear it in half. Nobody locked you in here but you, and now you have chosen to leave.</p><p><b>Chapters sealed: ${S.done.length} / ${BUILT} &nbsp;·&nbsp; Playtime: ${fmtT(S.t)}</b></p>`+B("menu","Main menu"))}
+function end(){ach("esc",1);ach("truth",1);M("Protocol complete",`<p>The final door opens onto dawn. S is waiting with the admission form from attempt 214.</p><p>You tear it in half. Nobody locked you in here but you, and now you have chosen to leave.</p><p><b>Chapters sealed: ${S.done.length} / ${BUILT} &nbsp;·&nbsp; Playtime: ${fmtT(S.t)}</b></p>`+B("menu","Main menu"))}
 function stepH(){const L=HN[S.room]||genHN(S.room),f=F();for(let i=0;i<L.length;i++)if(L[i][0](f))return[i,L[i][1]];return[0,L[0][1]]}
 function hintUI(){const[i,h]=stepH(),n=S.hl[S.room+"-"+i]||0;M("Hints",(n?h.slice(0,n).map((x,j)=>`<p><b style="color:var(--cold)">HINT ${j+1}</b>\n${x}</p>`).join(""):"<p>Stuck? Hints go from subtle to almost direct.</p>")+(n<3?B("hn","Reveal hint "+(n+1)):"<p>No more hints for this step.</p>"))}
 /* ---------- actions ---------- */
@@ -361,7 +360,7 @@ snd(){S.set.snd=S.set.snd?0:1;vol();save();ACT.set()},
 fs(){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()},
 reset(){M("Reset progress","<p>Erase ALL progress?</p>"+B("resetgo","Erase")+B("close","Cancel"))},resetgo(){try{localStorage.removeItem(KEY)}catch(e){}const st=S.set;S=DEF();S.set=st;X();ACT.menu()},
 cred(){M("Credits","<p>THE EXIT PROTOCOL\nA browser escape-room mystery.\n\nBuilt with HTML, CSS and JavaScript. All visuals and sound are generated in code.</p>")},
-menu(){gp(0);X();$("#game").classList.remove("on");$("#menu").classList.add("on");$("[data-a=cont]").disabled=!ld()},
+menu(){X();$("#game").classList.remove("on");$("#menu").classList.add("on");$("[data-a=cont]").disabled=!ld()},
 pause(){const h=Object.values(S.rh).reduce((a,b)=>a+b,0);M("Paused",`<p>Completion ${Math.round(S.done.length/BUILT*100)}% · Playtime ${fmtT(S.t)} · Hints used ${h}</p>`+B("close","Resume")+B("rr","Restart room")+B("ach","Achievements")+B("set","Settings")+B("menu","Main menu"))},
 ach(){M("Achievements",Object.keys(ACH).map(k=>`<p style="opacity:${S.ach.includes(k)?1:.4}"><b>${S.ach.includes(k)?"◆":"◇"} ${ACH[k][0]}</b>\n${ACH[k][1]}</p>`).join(""))},
 rr(){M("Restart room","<p>Restart this room? Its progress and items will be reset.</p>"+B("rrgo","Restart")+B("close","Cancel"))},rrgo(){const n=S.room;delete S.f[n];S.inv=S.inv.filter(i=>IT[i].r!=n);S.j=S.j.filter(e=>e.r!=n);start(n)},
@@ -384,7 +383,4 @@ document.addEventListener("input",e=>{if(e.target.id=="vr"){S.set.vol=+e.target.
 addEventListener("keydown",e=>{if(!$("#game").classList.contains("on")||e.target.tagName=="INPUT")return;const k=e.key.toLowerCase();if(k=="escape")isOpen()?X():ACT.pause();else if(!isOpen()){if(k=="j")ACT.journal();if(k=="h")ACT.hint()}});
 setInterval(()=>{if($("#game").classList.contains("on")&&!document.hidden){S.t++;if(S.t%10==0)save()}},1000);
 $("[data-a=cont]").disabled=!ld();
-/* ---------- CrazyGames SDK ---------- */
-function gp(on){try{const g=window.CrazyGames.SDK.game;on?g.gameplayStart():g.gameplayStop()}catch(e){}}
-(async()=>{try{await window.CrazyGames.SDK.init()}catch(e){}})();
 </script></body></html>
