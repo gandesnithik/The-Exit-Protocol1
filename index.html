@@ -163,7 +163,7 @@ button.sl:hover{border-color:var(--cold)}
 <div class="corr"><i class="cork"></i><i class="lamp"></i><i class="shade"></i><i class="fg"></i><i class="nz"></i><i class="vg"></i></div>
 <div class="dsk"></div><div class="vg2"></div>
 <div class="mc"><p class="cf mono">CASE FILE Nº 214 — CLASSIFIED</p><h1>THE EXIT<b>PROTOCOL</b></h1><p class="tg">EVERY ROOM HAS A SECRET. EVERY SECRET HAS A COST.</p>
-<button class="mb" data-a="new">NEW GAME</button><button class="mb" data-a="cont" disabled>CONTINUE</button><button class="mb" data-a="chap">CHAPTER SELECT</button><button class="mb" data-a="how">HOW TO PLAY</button><button class="mb" data-a="set">SETTINGS</button><button class="mb" data-a="cred">CREDITS</button></div>
+<button class="mb" data-a="new">NEW GAME</button><button class="mb" data-a="cont" disabled>CONTINUE</button><button class="mb" data-a="chap">CHAPTER SELECT</button><button class="mb" data-a="how">HOW TO PLAY</button><button class="mb" data-a="set">SETTINGS</button></div>
 </section>
 <section id="game" class="screen">
 <div class="top"><span id="ch"></span><h2 id="rn"></h2><div class="prog"><b id="pg"></b></div><span style="flex:1"></span><button class="btn" data-a="pause" style="margin:0">Pause</button></div>
@@ -390,7 +390,6 @@ set(){M("Settings",`<p>Volume</p><input id="vr" type="range" min="0" max="1" ste
 snd(){S.set.snd=S.set.snd?0:1;vol();save();ACT.set()},
 fs(){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()},
 reset(){M("Reset progress","<p>Erase ALL progress?</p>"+B("resetgo","Erase")+B("close","Cancel"))},resetgo(){try{localStorage.removeItem(KEY);if(cloudReady)window.CrazyGames.SDK.data.removeItem(KEY)}catch(e){}const st=S.set;S=DEF();S.set=st;X();ACT.menu()},
-cred(){M("Credits","<p>THE EXIT PROTOCOL\nA browser escape-room mystery.\n\nBuilt with HTML, CSS and JavaScript. All visuals and sound are generated in code.</p>")},
 menu(){X();$("#game").classList.remove("on");$("#menu").classList.add("on");$("[data-a=cont]").disabled=!ld()},
 pause(){const h=Object.values(S.rh).reduce((a,b)=>a+b,0);M("Paused",`<p>Completion ${Math.round(S.done.length/BUILT*100)}% · Playtime ${fmtT(S.t)} · Hints used ${h}</p>`+B("close","Resume")+B("rr","Restart room")+B("how","How to play")+B("ach","Achievements")+B("set","Settings")+B("menu","Main menu"))},
 ach(){M("Achievements",Object.keys(ACH).map(k=>`<p style="opacity:${S.ach.includes(k)?1:.4}"><b>${S.ach.includes(k)?"◆":"◇"} ${ACH[k][0]}</b>\n${ACH[k][1]}</p>`).join(""))},
